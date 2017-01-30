@@ -1,0 +1,11 @@
+{
+    "name": "conductor",
+    "version": "1.0.0",
+    "description": "controls all the animators",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Eric Geusz",
+    "license": ""
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+	Energy Flow - Conductor
+	</title>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+
+		<link rel="stylesheet" href="./bootstrap/css/bootstrap-theme.min.css">
+
+		<script src="./bootstrap/js/jquery-3.1.1.min.js"></script>
+
+		<script src="./bootstrap/js/bootstrap.min.js"></script>
+
+		<script src="./js/interface.js"></script>
+
+		<script src="/socket.io/socket.io.js"></script>
+</head>
+<body onLoad="init()">
+	<div class="row">
+		<div class="col-sm-12">
+			<h2>Conductor</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<h3>Animation Mode</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-2 text-right">
+			<label>Current Mode</label>
+		</div>
+		<div class="col-sm-2">
+			<div id="mode" class="well well-sm">
+				
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				<select id="modes" class="form-control">
+				</select>
+			</div>
+		</div>	
+		<div class="col-sm-4">
+			<div class="form-group">
+				<button type="button" class="btn btn-info" onClick="setMode()" >Set</button>
+			</div>
+		</div>		
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<h3>Play per Animator</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-1 text-right">
+			<label for="animator_who">Who</label>
+		</div>
+		<div class="col-sm-3">
+    		<input type="text" class="form-control" id="animator_who" placeholder="a111">
+		</div>
+		<div class="col-sm-1 text-right">
+			<label for="animator_name">Anim</label>
+		</div>
+		<div class="col-sm-3">
+    		<input type="text" class="form-control" id="animator_name" placeholder="WIPE">
+		</div>
+		<div class="col-sm-2">
+			<div class="form-group">
+				<button type="button" class="btn btn-info" onClick="playAnim()" >Play</button>
+			</div>
+		</div>		
+	</div>
+	<div class="row">
+		<div class="col-sm-1">
+		</div>
+
+		<div class="col-sm-2">
+			<div class="checkbox">
+				<label>
+					<input id="strip1" type="checkbox" checked="true"> strip 1
+				</label>
+			</div>
+		</div>
+		<div class="col-sm-2">
+			<div class="checkbox">
+				<label>
+					<input id="strip2" type="checkbox" checked="true"> strip 2
+				</label>
+			</div>
+		</div>
+		<div class="col-sm-2">
+			<div class="checkbox">
+				<label>
+					<input id="tstrip1" type="checkbox" checked="true"> tstrip 1
+				</label>
+			</div>
+		</div>
+		<div class="col-sm-2">
+			<div class="checkbox">
+				<label>
+					<input id="tstrip2" type="checkbox" checked="true"> tstrip 2
+				</label>
+			</div>
+		</div>
+		<div class="col-sm-2">
+			<div class="checkbox">
+				<label>
+					<input id="circle" type="checkbox" checked="true"> circle
+				</label>
+			</div>
+		</div>
+
+
+	</div>
+	
+</body>
+</html>
+

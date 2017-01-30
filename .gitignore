@@ -28,6 +28,9 @@ build/Release
 
 # Dependency directories
 node_modules
+node_conductor/node_modules
+node_animator/node_modules
+
 jspm_packages
 
 # Optional npm cache directory
