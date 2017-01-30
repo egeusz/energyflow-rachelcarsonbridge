@@ -32,6 +32,8 @@ node_conductor/node_modules
 node_animator/node_modules
 
 jspm_packages
+node_conductor/jspm_packages
+node_animator/jspm_packages
 
 # Optional npm cache directory
 .npm
