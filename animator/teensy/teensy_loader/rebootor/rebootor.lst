@@ -1,0 +1,341 @@
+   1               		.file	"rebootor.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.startup.main,"ax",@progbits
+  11               	.global	main
+  13               	main:
+  14               	.LFB6:
+  15               		.file 1 "rebootor.c"
+   1:rebootor.c    **** /* Teensy Rebootor
+   2:rebootor.c    ****  * http://www.pjrc.com/teensy
+   3:rebootor.c    ****  * Copyright (c) 2010 PJRC.COM, LLC
+   4:rebootor.c    ****  * 
+   5:rebootor.c    ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:rebootor.c    ****  * of this software and associated documentation files (the "Software"), to deal
+   7:rebootor.c    ****  * in the Software without restriction, including without limitation the rights
+   8:rebootor.c    ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:rebootor.c    ****  * copies of the Software, and to permit persons to whom the Software is
+  10:rebootor.c    ****  * furnished to do so, subject to the following conditions:
+  11:rebootor.c    ****  * 
+  12:rebootor.c    ****  * The above description, website URL and copyright notice and this permission
+  13:rebootor.c    ****  * notice shall be included in all copies or substantial portions of the Software.
+  14:rebootor.c    ****  * 
+  15:rebootor.c    ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:rebootor.c    ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:rebootor.c    ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:rebootor.c    ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:rebootor.c    ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:rebootor.c    ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:rebootor.c    ****  * THE SOFTWARE.
+  22:rebootor.c    ****  */
+  23:rebootor.c    **** 
+  24:rebootor.c    **** #include <avr/io.h>
+  25:rebootor.c    **** #include <avr/sleep.h>
+  26:rebootor.c    **** #include <avr/interrupt.h>
+  27:rebootor.c    **** #include <util/delay.h>
+  28:rebootor.c    **** #include "usb.h"
+  29:rebootor.c    **** 
+  30:rebootor.c    **** #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
+  31:rebootor.c    **** 
+  32:rebootor.c    **** int main(void)
+  33:rebootor.c    **** {
+  16               		.loc 1 33 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  34:rebootor.c    **** 	// set for 1 MHz clock
+  35:rebootor.c    **** 	CPU_PRESCALE(4);
+  22               		.loc 1 35 0
+  23 0000 80E8      		ldi r24,lo8(-128)
+  24 0002 8093 6100 		sts 97,r24
+  25 0006 84E0      		ldi r24,lo8(4)
+  26 0008 8093 6100 		sts 97,r24
+  36:rebootor.c    **** 
+  37:rebootor.c    **** 	// set all pins as inputs with pullup resistors
+  38:rebootor.c    **** 	#if defined(PORTA)
+  39:rebootor.c    **** 	DDRF = 0;
+  40:rebootor.c    **** 	PORTF = 0xFF;
+  41:rebootor.c    **** 	#endif
+  42:rebootor.c    **** 	DDRB = 0;
+  27               		.loc 1 42 0
+  28 000c 14B8      		out 0x4,__zero_reg__
+  43:rebootor.c    **** 	PORTB = 0xFF;
+  29               		.loc 1 43 0
+  30 000e 8FEF      		ldi r24,lo8(-1)
+  31 0010 85B9      		out 0x5,r24
+  44:rebootor.c    **** 	DDRC = 0;
+  32               		.loc 1 44 0
+  33 0012 17B8      		out 0x7,__zero_reg__
+  45:rebootor.c    **** 	PORTC = 0xFF;
+  34               		.loc 1 45 0
+  35 0014 88B9      		out 0x8,r24
+  46:rebootor.c    **** 	DDRD = 0;
+  36               		.loc 1 46 0
+  37 0016 1AB8      		out 0xa,__zero_reg__
+  47:rebootor.c    **** 	PORTD = 0xFF;
+  38               		.loc 1 47 0
+  39 0018 8BB9      		out 0xb,r24
+  48:rebootor.c    **** 	#if defined(PORTE)
+  49:rebootor.c    **** 	DDRE = 0;
+  40               		.loc 1 49 0
+  41 001a 1DB8      		out 0xd,__zero_reg__
+  50:rebootor.c    **** 	PORTE = 0xFF;
+  42               		.loc 1 50 0
+  43 001c 8EB9      		out 0xe,r24
+  51:rebootor.c    **** 	#endif
+  52:rebootor.c    **** 	#if defined(PORTF)
+  53:rebootor.c    **** 	DDRF = 0;
+  44               		.loc 1 53 0
+  45 001e 10BA      		out 0x10,__zero_reg__
+  54:rebootor.c    **** 	PORTF = 0xFF;
+  46               		.loc 1 54 0
+  47 0020 81BB      		out 0x11,r24
+  55:rebootor.c    **** 	#endif
+  56:rebootor.c    **** 
+  57:rebootor.c    **** 	// initialize USB
+  58:rebootor.c    **** 	usb_init();
+  48               		.loc 1 58 0
+  49 0022 0E94 0000 		call usb_init
+  50               	.LVL0:
+  51               	.L2:
+  52               	.LBB4:
+  53               	.LBB5:
+  54               		.file 2 "/usr/lib/avr/include/util/delay.h"
+   1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/avr/include/util/delay.h **** 
+   6:/usr/lib/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/avr/include/util/delay.h **** 
+   9:/usr/lib/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/avr/include/util/delay.h **** 
+  12:/usr/lib/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/avr/include/util/delay.h **** 
+  17:/usr/lib/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/avr/include/util/delay.h **** 
+  21:/usr/lib/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/avr/include/util/delay.h **** 
+  33:/usr/lib/avr/include/util/delay.h **** /* $Id$ */
+  34:/usr/lib/avr/include/util/delay.h **** 
+  35:/usr/lib/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/avr/include/util/delay.h **** 
+  38:/usr/lib/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/avr/include/util/delay.h **** #endif
+  41:/usr/lib/avr/include/util/delay.h **** 
+  42:/usr/lib/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/avr/include/util/delay.h **** 
+  46:/usr/lib/avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/avr/include/util/delay.h ****     \code
+  49:/usr/lib/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/avr/include/util/delay.h **** 
+  54:/usr/lib/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/avr/include/util/delay.h ****     used.
+  58:/usr/lib/avr/include/util/delay.h **** 
+  59:/usr/lib/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/avr/include/util/delay.h **** 
+  68:/usr/lib/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/avr/include/util/delay.h **** 
+  77:/usr/lib/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/avr/include/util/delay.h **** 
+  81:/usr/lib/avr/include/util/delay.h **** */
+  82:/usr/lib/avr/include/util/delay.h **** 
+  83:/usr/lib/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/avr/include/util/delay.h **** #endif
+  87:/usr/lib/avr/include/util/delay.h **** 
+  88:/usr/lib/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/avr/include/util/delay.h **** #endif
+  93:/usr/lib/avr/include/util/delay.h **** 
+  94:/usr/lib/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/avr/include/util/delay.h **** #endif
+  97:/usr/lib/avr/include/util/delay.h **** 
+  98:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/avr/include/util/delay.h **** #endif
+ 103:/usr/lib/avr/include/util/delay.h **** 
+ 104:/usr/lib/avr/include/util/delay.h **** /**
+ 105:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/avr/include/util/delay.h **** 
+ 107:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/avr/include/util/delay.h **** 
+ 109:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/avr/include/util/delay.h **** 
+ 112:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/avr/include/util/delay.h **** 
+ 114:/usr/lib/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/avr/include/util/delay.h **** 
+ 120:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/avr/include/util/delay.h **** 
+ 125:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/avr/include/util/delay.h **** 
+ 129:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/avr/include/util/delay.h **** 
+ 132:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/avr/include/util/delay.h **** 
+ 140:/usr/lib/avr/include/util/delay.h ****  */
+ 141:/usr/lib/avr/include/util/delay.h **** void
+ 142:/usr/lib/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/avr/include/util/delay.h **** {
+ 144:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 145:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 146:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 147:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 148:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 149:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 150:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 151:/usr/lib/avr/include/util/delay.h **** 
+ 152:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 153:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 154:/usr/lib/avr/include/util/delay.h **** 
+ 155:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 156:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 157:/usr/lib/avr/include/util/delay.h **** 
+ 158:/usr/lib/avr/include/util/delay.h **** 	#else
+ 159:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 160:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 161:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 162:/usr/lib/avr/include/util/delay.h **** 
+ 163:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+  55               		.loc 2 163 0 discriminator 1
+  56 0026 89EF      		ldi r24,lo8(249)
+  57 0028 90E0      		ldi r25,hi8(249)
+  58 002a 0197      		1: sbiw r24,1
+  59 002c 01F4      		brne 1b
+  60 002e 00C0      		rjmp .
+  61 0030 0000      		nop
+  62               	.LBE5:
+  63               	.LBE4:
+  59:rebootor.c    **** 
+  60:rebootor.c    **** 	// do nothing (USB code handles reboot message)
+  61:rebootor.c    **** 	while (1) {
+  62:rebootor.c    **** 		_delay_ms(1);
+  63:rebootor.c    **** 		// put the CPU into low power idle mode
+  64:rebootor.c    **** 		set_sleep_mode(SLEEP_MODE_IDLE);
+  64               		.loc 1 64 0 discriminator 1
+  65 0032 83B7      		in r24,0x33
+  66 0034 817F      		andi r24,lo8(-15)
+  67 0036 83BF      		out 0x33,r24
+  65:rebootor.c    **** 		cli();
+  68               		.loc 1 65 0 discriminator 1
+  69               	/* #APP */
+  70               	 ;  65 "rebootor.c" 1
+  71 0038 F894      		cli
+  72               	 ;  0 "" 2
+  66:rebootor.c    **** 		sleep_enable();
+  73               		.loc 1 66 0 discriminator 1
+  74               	/* #NOAPP */
+  75 003a 83B7      		in r24,0x33
+  76 003c 8160      		ori r24,lo8(1)
+  77 003e 83BF      		out 0x33,r24
+  67:rebootor.c    **** 		sei();
+  78               		.loc 1 67 0 discriminator 1
+  79               	/* #APP */
+  80               	 ;  67 "rebootor.c" 1
+  81 0040 7894      		sei
+  82               	 ;  0 "" 2
+  68:rebootor.c    **** 		sleep_cpu();
+  83               		.loc 1 68 0 discriminator 1
+  84               	 ;  68 "rebootor.c" 1
+  85 0042 8895      		sleep
+  86               		
+  87               	 ;  0 "" 2
+  69:rebootor.c    **** 		sleep_disable();
+  88               		.loc 1 69 0 discriminator 1
+  89               	/* #NOAPP */
+  90 0044 83B7      		in r24,0x33
+  91 0046 8E7F      		andi r24,lo8(-2)
+  92 0048 83BF      		out 0x33,r24
+  93 004a 00C0      		rjmp .L2
+  94               		.cfi_endproc
+  95               	.LFE6:
+  97               		.text
+  98               	.Letext0:
+  99               		.file 3 "/usr/lib/avr/include/stdint.h"
+ 100               		.file 4 "usb.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 rebootor.c
+     /tmp/ccYWy63U.s:2      *ABS*:0000003e __SP_H__
+     /tmp/ccYWy63U.s:3      *ABS*:0000003d __SP_L__
+     /tmp/ccYWy63U.s:4      *ABS*:0000003f __SREG__
+     /tmp/ccYWy63U.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccYWy63U.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccYWy63U.s:13     .text.startup.main:00000000 main
+
+UNDEFINED SYMBOLS
+usb_init

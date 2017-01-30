@@ -1,0 +1,4 @@
+for setting up git on windows make sure to run:
+git config core.longpaths true
+
+this will make it so the nested node modules don't crahs git on windows
