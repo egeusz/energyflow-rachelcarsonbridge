@@ -1,0 +1,1 @@
+These scripts are only meant to run on the raspberry-pis which have a different folder structure.
